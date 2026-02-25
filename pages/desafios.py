@@ -48,7 +48,7 @@ with st.form("form_desafio"):
         if titulo and data_apresentacao:
 
             disciplina_id = next(
-                d["id"] for d in disciplinas if d["nome_disciplinas"] == disciplina_escolhida
+                d["id"] for d in disciplinas if d["nome_disciplina"] == disciplina_escolhida
             )
 
             # Se marcar como ativo, desativa todos
@@ -87,7 +87,7 @@ if response.data:
     for desafio in response.data:
 
         nome_disciplina = (
-            desafio["disciplinas"]["nome_disciplinas"]
+            desafio["disciplinas"]["nome_disciplina"]
             if desafio.get("disciplinas")
             else "Não vinculada"
         )
@@ -182,7 +182,7 @@ if "editar_id" in st.session_state:
 
         nova_disciplina_id = next(
             d["id"] for d in disciplinas
-            if d["nome_disciplinas"] == nova_disciplina
+            if d["nome_disciplina"] == nova_disciplina
         )
 
         if novo_ativo:
