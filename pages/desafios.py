@@ -24,7 +24,7 @@ if not disciplinas:
     st.warning("Cadastre uma disciplina antes de criar um desafio.")
     st.stop()
 
-nomes_disciplinas = [d["nome"] for d in disciplinas]
+nomes_disciplinas = [d["nome_disciplinas"] for d in disciplinas]
 
 # ==========================
 # CRIAR DESAFIO
@@ -48,7 +48,7 @@ with st.form("form_desafio"):
         if titulo and data_apresentacao:
 
             disciplina_id = next(
-                d["id"] for d in disciplinas if d["nome"] == disciplina_escolhida
+                d["id"] for d in disciplinas if d["nome_disciplinas"] == disciplina_escolhida
             )
 
             # Se marcar como ativo, desativa todos
@@ -79,7 +79,7 @@ with st.form("form_desafio"):
 st.subheader("📋 Lista de Desafios")
 
 response = supabase.table("desafios").select(
-    "*, disciplinas(nome)"
+    "*, disciplinas(nome_disciplinas)"
 ).order("id").execute()
 
 if response.data:
@@ -87,7 +87,7 @@ if response.data:
     for desafio in response.data:
 
         nome_disciplina = (
-            desafio["disciplinas"]["nome"]
+            desafio["disciplinas"]["nome_disciplinas"]
             if desafio.get("disciplinas")
             else "Não vinculada"
         )
@@ -182,7 +182,7 @@ if "editar_id" in st.session_state:
 
         nova_disciplina_id = next(
             d["id"] for d in disciplinas
-            if d["nome"] == nova_disciplina
+            if d["nome_disciplinas"] == nova_disciplina
         )
 
         if novo_ativo:
