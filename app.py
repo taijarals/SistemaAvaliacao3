@@ -15,7 +15,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # INTERFACE STREAMLIT
 # ==========================
 
-st.title("Projeto Backend - Streamlit + Supabase")
+st.title("Sistema de Avaliação")
 
 st.write("Exemplo simples de conexão com banco relacional na nuvem.")
 
