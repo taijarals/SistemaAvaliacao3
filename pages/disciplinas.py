@@ -30,7 +30,7 @@ with st.form("form_disciplina"):
         if nome_disciplina:
 
             supabase.table("disciplinas").insert({
-                "nome_diciplina": nome_disciplina,
+                "nome_disciplina": nome_disciplina,
                 "nome_curso": nome_curso,
                 "dia_aula": dia_aula
             }).execute()
@@ -53,7 +53,7 @@ if response.data:
 
     for disciplina in response.data:
 
-        with st.expander(f"{disciplina['id']} - {disciplina['nome_diciplina']}"):
+        with st.expander(f"{disciplina['id']} - {disciplina['nome_disciplina']}"):
 
             st.write("🎓 Curso:", disciplina["nome_curso"])
             st.write("📅 Dia da aula:", disciplina["dia_aula"])
@@ -104,7 +104,7 @@ if "editar_disciplina_id" in st.session_state:
 
     novo_nome = st.text_input(
         "Nome da Disciplina",
-        value=disciplina_edit["nome_diciplina"]
+        value=disciplina_edit["nome_disciplina"]
     )
 
     novo_curso = st.text_input(
@@ -122,7 +122,7 @@ if "editar_disciplina_id" in st.session_state:
         if novo_nome:
 
             supabase.table("disciplinas").update({
-                "nome_diciplina": novo_nome,
+                "nome_disciplina": novo_nome,
                 "nome_curso": novo_curso,
                 "dia_aula": novo_dia
             }).eq("id", disciplina_id).execute()
