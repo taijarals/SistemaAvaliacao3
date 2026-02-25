@@ -1,0 +1,134 @@
+import streamlit as st
+from supabase import create_client
+from datetime import date
+
+# ==========================
+# CONFIG SUPABASE
+# ==========================
+
+SUPABASE_URL = "https://iqeqnsobhcknizaowius.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxZXFuc29iaGNrbml6YW93aXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MjM3NDMsImV4cCI6MjA4NzI5OTc0M30.lq5a232elsZyMxg6qT-LXX_2WTsF790RN0X8S8ulTvY"
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+st.title("📚 Gestão de Desafios")
+
+# ==========================
+# CRIAR DESAFIO
+# ==========================
+
+st.subheader("➕ Novo Desafio")
+
+with st.form("form_desafio"):
+
+    titulo = st.text_input("Título")
+    descricao = st.text_area("Descrição")
+    data_lancamento = st.date_input("Data de Lançamento", value=date.today())
+    data_apresentacao = st.date_input("Data de Apresentação")
+    ativo = st.checkbox("Definir como ativo")
+
+    submitted = st.form_submit_button("Salvar")
+
+    if submitted:
+
+        if titulo and data_apresentacao:
+
+            # Se marcar como ativo, desativa todos os outros
+            if ativo:
+                supabase.table("desafios").update({"ativo": False}).neq("id", 0).execute()
+
+            supabase.table("desafios").insert({
+                "titulo": titulo,
+                "descricao": descricao,
+                "data_lancamento": str(data_lancamento),
+                "data_apresentacao": str(data_apresentacao),
+                "ativo": ativo
+            }).execute()
+
+            st.success("Desafio criado com sucesso!")
+            st.rerun()
+
+        else:
+            st.warning("Preencha os campos obrigatórios.")
+
+# ==========================
+# LISTAR DESAFIOS
+# ==========================
+
+st.subheader("📋 Lista de Desafios")
+
+response = supabase.table("desafios").select("*").order("id").execute()
+
+if response.data:
+
+    for desafio in response.data:
+
+        with st.expander(f"{desafio['id']} - {desafio['titulo']}"):
+
+            st.write("Descrição:", desafio["descricao"])
+            st.write("Lançamento:", desafio["data_lancamento"])
+            st.write("Apresentação:", desafio["data_apresentacao"])
+            st.write("Ativo:", "✅ Sim" if desafio["ativo"] else "❌ Não")
+
+            col1, col2, col3 = st.columns(3)
+
+            # ATIVAR
+            if col1.button("Ativar", key=f"ativar_{desafio['id']}"):
+
+                supabase.table("desafios").update({"ativo": False}).neq("id", 0).execute()
+                supabase.table("desafios").update({"ativo": True}).eq("id", desafio["id"]).execute()
+
+                st.success("Desafio ativado!")
+                st.rerun()
+
+            # EDITAR
+            if col2.button("Editar", key=f"editar_{desafio['id']}"):
+
+                st.session_state["editar_id"] = desafio["id"]
+
+            # EXCLUIR
+            if col3.button("Excluir", key=f"excluir_{desafio['id']}"):
+
+                supabase.table("desafios").delete().eq("id", desafio["id"]).execute()
+
+                st.success("Desafio excluído!")
+                st.rerun()
+
+else:
+    st.info("Nenhum desafio cadastrado.")
+
+# ==========================
+# EDIÇÃO
+# ==========================
+
+if "editar_id" in st.session_state:
+
+    desafio_id = st.session_state["editar_id"]
+
+    desafio_edit = supabase.table("desafios").select("*").eq("id", desafio_id).execute().data[0]
+
+    st.subheader("✏️ Editar Desafio")
+
+    novo_titulo = st.text_input("Título", value=desafio_edit["titulo"])
+    nova_descricao = st.text_area("Descrição", value=desafio_edit["descricao"])
+    nova_data_lancamento = st.date_input("Data de Lançamento", value=date.fromisoformat(desafio_edit["data_lancamento"]))
+    nova_data_apresentacao = st.date_input("Data de Apresentação", value=date.fromisoformat(desafio_edit["data_apresentacao"]))
+    novo_ativo = st.checkbox("Ativo", value=desafio_edit["ativo"])
+
+    if st.button("Atualizar"):
+
+        if novo_ativo:
+            supabase.table("desafios").update({"ativo": False}).neq("id", 0).execute()
+
+        supabase.table("desafios").update({
+            "titulo": novo_titulo,
+            "descricao": nova_descricao,
+            "data_lancamento": str(nova_data_lancamento),
+            "data_apresentacao": str(nova_data_apresentacao),
+            "ativo": novo_ativo
+        }).eq("id", desafio_id).execute()
+
+        del st.session_state["editar_id"]
+
+        st.success("Desafio atualizado!")
+        st.rerun()

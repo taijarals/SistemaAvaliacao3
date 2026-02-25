@@ -26,10 +26,10 @@ st.title("🏆 Sistema de Avaliação de Desafios")
 # MENU LATERAL
 # ==========================
 
-menu = st.sidebar.radio(
-    "Navegação",
-    ["Votação", "Gestão de Alunos", "Gestão de Desafios"]
-)
+#menu = st.sidebar.radio(
+#    "Navegação",
+#    ["Votação", "Gestão de Alunos", "Gestão de Desafios"]
+#)
 
 # ==========================
 # TELA VOTAÇÃO
