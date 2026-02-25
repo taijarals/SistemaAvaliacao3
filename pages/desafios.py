@@ -79,7 +79,7 @@ with st.form("form_desafio"):
 st.subheader("📋 Lista de Desafios")
 
 response = supabase.table("desafios").select(
-    "*, disciplinas(nome_disciplinas)"
+    "*, disciplinas(nome_disciplina)"
 ).order("id").execute()
 
 if response.data:
