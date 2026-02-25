@@ -24,7 +24,7 @@ if not disciplinas:
     st.warning("Cadastre uma disciplina antes de criar um desafio.")
     st.stop()
 
-nomes_disciplinas = [d["nome_disciplinas"] for d in disciplinas]
+nomes_disciplinas = [d["nome_disciplina"] for d in disciplinas]
 
 # ==========================
 # CRIAR DESAFIO
