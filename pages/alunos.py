@@ -5,8 +5,11 @@ from supabase import create_client
 # CONFIG SUPABASE
 # ==========================
 
-SUPABASE_URL = "SUA_URL"
-SUPABASE_KEY = "SUA_KEY"
+#SUPABASE_URL = "SUA_URL"
+#SUPABASE_KEY = "SUA_KEY"
+
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_ANON_KEY"]
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
